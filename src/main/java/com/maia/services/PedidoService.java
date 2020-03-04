@@ -38,17 +38,17 @@ public class PedidoService {
 			pedido.setId(null);
 			pedido.setDataDaCompra(LocalDateTime.now());
 			pedido.setCliente(clienteService.retornaClientePorId(idCliente));
+			pedido.setTotalDaCompra(pedido.getValorTotalDoPedido());
 			
 			pedido = repository.save(pedido);
 			
-			for (ItemPedido iten : pedido.getProdutos()) {
-				iten.setPreco(iten.getProduto().getPreco());
+			for (ItemPedido iten : pedido.getProdutos()) {				
 				iten.setProduto(produtoService.retornaProdutoPorId(iten.getProduto().getId()));
 				iten.setPedido(pedido);
 				iten.setQuantidade(iten.getQuantidade());				
 			}
-			itemPedidoRepo.saveAll(pedido.getProdutos());			
-			return repository.save(pedido);			
+			itemPedidoRepo.saveAll(pedido.getProdutos());	
+			return pedido;			
 		} catch (Exception e) {
 			throw new RuntimeException("Falha na requisição de salvar um novo Pedido ");
 		}

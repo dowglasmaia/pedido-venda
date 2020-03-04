@@ -9,6 +9,9 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author Dowglas Maia Skype: live:dowglasmaia E-mail:dowglasmaia@live.com
  *         Linkedin: www.linkedin.com/in/dowglasmaia
@@ -29,6 +32,7 @@ public class Pedido implements Serializable {
 	@NotNull(message = " O campo Data da Compra do Pedido é obrigatório")
 	private LocalDateTime dataDaCompra;
 
+	
 	@Valid
 	@ManyToOne
 	private Cliente cliente;
@@ -52,7 +56,7 @@ public class Pedido implements Serializable {
 	public Double getValorTotalDoPedido() {
 		double soma= 0.0;
 		for(ItemPedido itp : produtos) {
-			soma = soma + itp.getSubTotal();
+			soma = soma + (itp.getProduto().getPreco() * itp.getQuantidade());
 		}
 		return soma;
 	}
@@ -71,7 +75,7 @@ public class Pedido implements Serializable {
 	}
 
 	public void setTotalDaCompra(Double totalDaCompra) {
-		this.totalDaCompra = totalDaCompra;
+		this.totalDaCompra = getValorTotalDoPedido();
 	}
 
 	public LocalDateTime getDataDaCompra() {
@@ -82,10 +86,12 @@ public class Pedido implements Serializable {
 		this.dataDaCompra = dataDaCompra;
 	}
 
+	@JsonIgnore
 	public Cliente getCliente() {
 		return cliente;
 	}
 
+	@JsonProperty
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
