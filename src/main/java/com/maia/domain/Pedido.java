@@ -2,10 +2,17 @@ package com.maia.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+/**
+ * @author Dowglas Maia Skype: live:dowglasmaia E-mail:dowglasmaia@live.com
+ *         Linkedin: www.linkedin.com/in/dowglasmaia
+ */
 
 @Entity
 public class Pedido implements Serializable {
@@ -15,6 +22,7 @@ public class Pedido implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = true)
 	@NotNull(message = " O campo Valor Total da Compra do Pedido é obrigatório")
 	private Double totalDaCompra;
 
@@ -25,21 +33,30 @@ public class Pedido implements Serializable {
 	@ManyToOne
 	private Cliente cliente;
 
-	@Valid
-	@ManyToOne
-	private Produto produto;
+	@OneToMany(mappedBy = "id.pedido")
+	private Set<ItemPedido> produtos = new HashSet<>();
 
 	public Pedido() {
 
 	}
 
-	public Pedido(Long id, Double totalDaCompra, LocalDateTime dataDaCompra, Cliente cliente, Produto produto) {		
+	public Pedido(Long id, Double totalDaCompra, LocalDateTime dataDaCompra, Cliente cliente) {
 		this.id = id;
 		this.totalDaCompra = totalDaCompra;
 		this.dataDaCompra = dataDaCompra;
 		this.cliente = cliente;
-		this.produto = produto;
+
 	}
+	
+	
+	public Double getValorTotalDoPedido() {
+		double soma= 0.0;
+		for(ItemPedido itp : produtos) {
+			soma = soma + itp.getSubTotal();
+		}
+		return soma;
+	}
+	
 
 	public Long getId() {
 		return id;
@@ -73,12 +90,8 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
+	public Set<ItemPedido> getProdutos() {
+		return produtos;
 	}
 
 	@Override

@@ -9,6 +9,15 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.br.CPF;
+
+/**
+ * @author Dowglas Maia
+ * Skype: live:dowglasmaia
+ * E-mail:dowglasmaia@live.com
+ * Linkedin: www.linkedin.com/in/dowglasmaia
+ * */
+
 @Entity
 public class Cliente implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -17,11 +26,16 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = true)
 	@NotBlank(message = " O campo nome do Cliente é obrigatório")
 	private String nome;
+	
+	@Column(unique = true, nullable = true)
 	@NotBlank(message = "O campo CPF do Cliente é obrigatório")
+	@CPF(message = "CPF Inválido, informe um CPF valído para continuar sua operação.")
 	private String cpf;
 
+	@Column(nullable = true)
 	@NotNull(message = "O campo Data de Nascimento do Cliente é obrigatório")
 	private LocalDate dataNascimento;
 	

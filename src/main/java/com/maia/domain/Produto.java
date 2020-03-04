@@ -1,12 +1,21 @@
 package com.maia.domain;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+/**
+ * @author Dowglas Maia
+ * Skype: live:dowglasmaia
+ * E-mail:dowglasmaia@live.com
+ * Linkedin: www.linkedin.com/in/dowglasmaia
+ * */
 
 @Entity
 public class Produto implements Serializable {
@@ -16,22 +25,23 @@ public class Produto implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true, nullable = true)
 	@NotBlank(message = " O campo sku do Produto é obrigatório")
 	private String sku;
 
+	@Column(nullable = true)
 	@NotBlank(message = " O campo Nome do Produto é obrigatório")
 	private String nome;
 
 	private String descricao;
 
+	@Column(nullable = true)
 	@NotNull(message = " O campo Preço do Produto é obrigatório")
 	private Double preco;
 
+	@Column(nullable = true)
 	@NotNull(message = " O campo Quantidade do Produto é obrigatório")
-	private Integer quantidade;
-
-	@OneToMany(mappedBy = "produto")
-	private Set<Pedido> pedidos = new HashSet<>();
+	private Integer quantidade;	
 
 	public Produto() {
 
