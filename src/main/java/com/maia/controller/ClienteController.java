@@ -32,6 +32,12 @@ public class ClienteController {
 		List<Cliente> result = clienteService.retornaListaDeClientes();
 		return ResponseEntity.ok().body(result);
 	}
+	
+	@GetMapping("/lista/nome")
+	public ResponseEntity<List<Cliente>> findAllClienteporNome(@RequestParam(value = "nome" )String nome) {
+		List<Cliente> result = clienteService.retornaClientePorNome(nome);
+		return ResponseEntity.ok().body(result);
+	}
 
 	@PostMapping()
 	public ResponseEntity<Void> insertCliente(@Valid @RequestBody Cliente cliente) {
