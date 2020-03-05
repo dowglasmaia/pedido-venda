@@ -7,18 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.maia.domain.ItemPedido;
-import com.maia.domain.ItemPedidoPK;
-import com.maia.domain.Pedido;
 
 @Repository
-public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long> {
-
-	
+public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long> {	
 	
 	@Query("SELECT p FROM ItemPedido p WHERE p.id.pedido.id = ?1")
 	List<ItemPedido> findAllByIdPedido(Long idPedido);
-/*
-	@Query("DELETE p FROM ItemPedido p WHERE p.id = ?1")
-	void deleteItenPorIdPedido(ItemPedidoPK id);
-*/
+
 }
