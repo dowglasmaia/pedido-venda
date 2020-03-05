@@ -2,13 +2,19 @@ package com.maia.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.format.annotation.NumberFormat.Style;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,20 +31,19 @@ public class Pedido implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = true)
-	@NotNull(message = " O campo Valor Total da Compra do Pedido é obrigatório")
+	@Column(nullable = false, columnDefinition = "DECIMAL(7,2) DEFAULT 0.00")
+	@NumberFormat(style = Style.CURRENCY, pattern = "#,##0.00")
 	private Double totalDaCompra;
 
-	@NotNull(message = " O campo Data da Compra do Pedido é obrigatório")
+	@JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
 	private LocalDateTime dataDaCompra;
 
-	
 	@Valid
 	@ManyToOne
 	private Cliente cliente;
 
-	@OneToMany(mappedBy = "id.pedido")
-	private Set<ItemPedido> produtos = new HashSet<>();
+	@OneToMany(mappedBy = "id.pedido", orphanRemoval = true)
+	private List<ItemPedido> produtos = new ArrayList<>();
 
 	public Pedido() {
 
@@ -51,16 +56,14 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 
 	}
-	
-	
-	public Double getValorTotalDoPedido() {
-		double soma= 0.0;
-		for(ItemPedido itp : produtos) {
+
+	public Double obterValorTotalDoPedido() {
+		double soma = 0.0;
+		for (ItemPedido itp : produtos) {
 			soma = soma + (itp.getProduto().getPreco() * itp.getQuantidade());
 		}
 		return soma;
 	}
-	
 
 	public Long getId() {
 		return id;
@@ -75,7 +78,7 @@ public class Pedido implements Serializable {
 	}
 
 	public void setTotalDaCompra(Double totalDaCompra) {
-		this.totalDaCompra = getValorTotalDoPedido();
+		this.totalDaCompra = obterValorTotalDoPedido();
 	}
 
 	public LocalDateTime getDataDaCompra() {
@@ -96,7 +99,7 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 	}
 
-	public Set<ItemPedido> getProdutos() {
+	public List<ItemPedido> getProdutos() {
 		return produtos;
 	}
 

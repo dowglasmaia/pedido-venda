@@ -32,7 +32,7 @@ public class TestsIntegrationsDB {
 		
 		
 		/* Produto*/
-		Produto p1 = new Produto(null, "PK-2020", "Teclado Gamer T2020", "Teclado Gamer Mecânico com LEDs", 1200.00, 10);
+		Produto p1 = new Produto(null, "PK-220", "Teclado Gamer T2020", "Teclado Gamer Mecânico com LEDs", 1200.00, 10);
 		Produto p2 = new Produto(null, "PK-2022", "Fone Gamer ", "Fone Gamer Mecânico com LEDs", 1000.00, 10);
 		Produto p3 = new Produto(null, "KJ-0020", "Case Start T2", "", 200.00, 10);
 		Produto p4 = new Produto(null, "OP-2088", "Monitor Curvo 4K", "", 11250.98, 10);

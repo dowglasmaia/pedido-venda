@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.format.annotation.NumberFormat.Style;
+
 /**
  * @author Dowglas Maia
  * Skype: live:dowglasmaia
@@ -29,17 +32,18 @@ public class Produto implements Serializable {
 	@NotBlank(message = " O campo sku do Produto é obrigatório")
 	private String sku;
 
-	@Column(nullable = true)
+	@Column(nullable = false)
 	@NotBlank(message = " O campo Nome do Produto é obrigatório")
 	private String nome;
 
 	private String descricao;
 
-	@Column(nullable = true)
+	@Column(nullable = false, columnDefinition = "DECIMAL(7,2) DEFAULT 0.00")
+	@NumberFormat(style = Style.CURRENCY, pattern ="#,##0.00")
 	@NotNull(message = " O campo Preço do Produto é obrigatório")
 	private Double preco;
 
-	@Column(nullable = true)
+	@Column(nullable = false)
 	@NotNull(message = " O campo Quantidade do Produto é obrigatório")
 	private Integer quantidade;	
 

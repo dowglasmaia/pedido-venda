@@ -21,15 +21,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	private static final String[] PUBLIC_MATCHERS_GET = { "/**" };
-
 	private static final String[] PUBLIC_MATCHERS_POST = { "/**" };
+	private static final String[] PUBLIC_MATCHERS_DELETE = { "/**" };
+	private static final String[] PUBLIC_MATCHERS_PUT = { "/**" };
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.cors().and().csrf().disable();
 		http.authorizeRequests().antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-				.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll().anyRequest().authenticated();
+				.antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+				.antMatchers(HttpMethod.DELETE, PUBLIC_MATCHERS_DELETE).permitAll()
+				.antMatchers(HttpMethod.PUT, PUBLIC_MATCHERS_PUT).permitAll()
+				.anyRequest().authenticated();
 
 		http.headers().frameOptions().sameOrigin();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

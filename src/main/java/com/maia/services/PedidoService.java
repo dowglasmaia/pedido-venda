@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.maia.domain.Cliente;
 import com.maia.domain.ItemPedido;
 import com.maia.domain.Pedido;
 import com.maia.repository.ItemPedidoRepository;
@@ -26,6 +27,9 @@ public class PedidoService {
 	@Autowired
 	private ProdutoService produtoService;
 
+	@Autowired
+	private ItemPedidoService itenPedidoService;
+
 	@Transactional(readOnly = true)
 	public Pedido retornaPedidoPorId(Long id) {
 		Optional<Pedido> pedido = repository.findById(id);
@@ -33,70 +37,75 @@ public class PedidoService {
 	}
 
 	@Transactional
-	public Pedido inserirNovoPedido(Pedido pedido , Long idCliente) {
+	public Pedido inserirNovoPedido(Pedido pedido, Long idCliente) {
 		try {
 			pedido.setId(null);
 			pedido.setDataDaCompra(LocalDateTime.now());
 			pedido.setCliente(clienteService.retornaClientePorId(idCliente));
-			pedido.setTotalDaCompra(pedido.getValorTotalDoPedido());
-			
+			pedido.setTotalDaCompra(pedido.obterValorTotalDoPedido());
+
 			pedido = repository.save(pedido);
-			
-			for (ItemPedido iten : pedido.getProdutos()) {				
+
+			for (ItemPedido iten : pedido.getProdutos()) {
 				iten.setProduto(produtoService.retornaProdutoPorId(iten.getProduto().getId()));
 				iten.setPedido(pedido);
-				iten.setQuantidade(iten.getQuantidade());				
+				iten.setQuantidade(iten.getQuantidade());
 			}
-			itemPedidoRepo.saveAll(pedido.getProdutos());	
-			return pedido;			
+			itemPedidoRepo.saveAll(pedido.getProdutos());
+			return pedido;
 		} catch (Exception e) {
 			throw new RuntimeException("Falha na requisição de salvar um novo Pedido ");
 		}
 	}
 
 	@Transactional
-	public Pedido editPedido(Pedido pedido) {
+	public Pedido editPedido(Pedido pedido , Long idCliente) {
 		Pedido newPedido = retornaPedidoPorId(pedido.getId());
+		Cliente cliente = clienteService.retornaClientePorId(idCliente);
 		try {
-			updateData(newPedido, pedido);
-			return repository.save(newPedido);			
+			updateData(newPedido, pedido, cliente);
+			return repository.save(newPedido);
 		} catch (Exception e) {
-			throw new RuntimeException("Falha ao tentar editar o Pedido de Código: "+ pedido.getId());
+			throw new RuntimeException("Falha ao tentar editar o Pedido de Código: " + pedido.getId());
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public List<Pedido> retornaListaDePedidos() {
 		try {
-			return repository.findAll();			
+			return repository.findAll();
 		} catch (Exception e) {
 			throw new RuntimeException("Falha ao tentar listar Pedidos");
 		}
 	}
-	
+
 	@Transactional
 	public void excluirPedido(Long id) {
 		retornaPedidoPorId(id);
 		try {
 			repository.deleteById(id);
 		} catch (Exception e) {
-			throw new RuntimeException("Falha ao Excluir Pedido de Código:" +id);
+			throw new RuntimeException("Falha ao Excluir Pedido de Código:" + id);
 		}
 	}
-	
-	public void removerPedidoPorIdCliente(Long IdCliente) {
-		try {
-			repository.deleteByIdCliente(IdCliente);
-		} catch (Exception e) {
-			throw new RuntimeException("Falha ao tentar excluir Pedido vinculado ao Cliente de código:" +IdCliente);
-		}
-	}
-	
-	
 
 	/* ##### METODOS PRIVADOS ###### */
-	private void updateData(Pedido newPedido, Pedido pedido) {
-		newPedido.setTotalDaCompra(pedido.getTotalDaCompra());	
+	private void updateData(Pedido newPedido, Pedido pedido, Cliente cliente) {
+		newPedido.getProdutos().clear();
+		itenPedidoService.updateItens(pedido.getId());
+		newPedido.setCliente(cliente);
+		
+		Double totalPedido = 0.0;
+		for (ItemPedido iten : pedido.getProdutos()) {
+			iten.setId(iten.getId());
+			iten.setProduto(iten.getProduto());
+			iten.setPedido(pedido);		
+			iten.setQuantidade(iten.getQuantidade());
+			newPedido.getProdutos().add(iten);
+			totalPedido += (iten.getProduto().getPreco() * iten.getQuantidade());
+		}
+		itemPedidoRepo.saveAll(newPedido.getProdutos());
+		newPedido.setTotalDaCompra(totalPedido);
 	}
 
 }
