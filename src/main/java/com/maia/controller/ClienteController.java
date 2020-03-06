@@ -22,39 +22,39 @@ public class ClienteController {
 	private ClienteService clienteService;
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Cliente> findClientePorId(@PathVariable Long id) {
+	public ResponseEntity<Cliente> getById(@PathVariable Long id) {
 		Cliente cliente = clienteService.retornaClientePorId(id);
 		return ResponseEntity.ok().body(cliente);
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> findAllCliente() {
+	public ResponseEntity<List<Cliente>> getAll() {
 		List<Cliente> result = clienteService.retornaListaDeClientes();
 		return ResponseEntity.ok().body(result);
 	}
 	
 	@GetMapping("/lista/nome")
-	public ResponseEntity<List<Cliente>> findAllClienteporNome(@RequestParam(value = "nome" )String nome) {
+	public ResponseEntity<List<Cliente>> getAllByNome(@RequestParam(value = "nome" )String nome) {
 		List<Cliente> result = clienteService.retornaClientePorNome(nome);
 		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping()
-	public ResponseEntity<Void> insertCliente(@Valid @RequestBody Cliente cliente) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Cliente cliente) {
 		cliente = clienteService.inserirNovoCliente(cliente);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cliente.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> updateCliente(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
+	public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
 		cliente.setId(id);
 		cliente = clienteService.editCliente(cliente);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		clienteService.excluirCliente(id);
 		return ResponseEntity.noContent().build();
 	}

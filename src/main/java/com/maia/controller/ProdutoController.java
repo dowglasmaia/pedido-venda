@@ -21,33 +21,33 @@ public class ProdutoController {
 	private ProdutoService produtoService;
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Produto> findProdutoPorId(@PathVariable Long id) {
+	public ResponseEntity<Produto> getById(@PathVariable Long id) {
 		Produto produto = produtoService.retornaProdutoPorId(id);
 		return ResponseEntity.ok().body(produto);
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Produto>> findAllProduto() {
+	public ResponseEntity<List<Produto>> getAll() {
 		List<Produto> result = produtoService.retornaListaDeProdutos();
 		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping()
-	public ResponseEntity<Void> insertProduto(@Valid @RequestBody Produto produto) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Produto produto) {
 		produto = produtoService.inserirNovoProduto(produto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(produto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> updateProduto(@PathVariable Long id, @Valid @RequestBody Produto produto) {
+	public ResponseEntity<Void> update(@PathVariable Long id, @Valid @RequestBody Produto produto) {
 		produto.setId(id);
 		produto = produtoService.editProduto(produto);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteProduto(@PathVariable Long id) {
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		produtoService.excluirProduto(id);
 		return ResponseEntity.noContent().build();
 	}
