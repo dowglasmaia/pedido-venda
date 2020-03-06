@@ -21,33 +21,33 @@ public class PedidoController {
 	private PedidoService pedidoService;
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Pedido> findPedidoPorId(@PathVariable Long id) {
+	public ResponseEntity<Pedido> getById(@PathVariable Long id) {
 		Pedido pedido = pedidoService.retornaPedidoPorId(id);
 		return ResponseEntity.ok().body(pedido);
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Pedido>> findAllPedido() {
+	public ResponseEntity<List<Pedido>> getAll() {
 		List<Pedido> result = pedidoService.retornaListaDePedidos();
 		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping("/cliente/{idCliente}")
-	public ResponseEntity<Void> insertPedido(@Valid @RequestBody Pedido pedido, @PathVariable Long idCliente) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody Pedido pedido, @PathVariable Long idCliente) {
 		pedido = pedidoService.inserirNovoPedido(pedido, idCliente);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(pedido.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@PutMapping("/{id}/cliente/{idCliente}")
-	public ResponseEntity<Void> updatePedido(@PathVariable Long id,@PathVariable Long idCliente, @Valid @RequestBody Pedido pedido) {
+	public ResponseEntity<Void> update(@PathVariable Long id,@PathVariable Long idCliente, @Valid @RequestBody Pedido pedido) {
 		pedido.setId(id);
 		pedido = pedidoService.editPedido(pedido, idCliente);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		pedidoService.excluirPedido(id);
 		return ResponseEntity.noContent().build();
 	}

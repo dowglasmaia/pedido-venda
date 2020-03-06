@@ -23,6 +23,12 @@ public class ClienteService {
 		return cliente.orElseThrow(() -> new ObjectNotFoundException("Cliente não encontrado para o Código: " + id));
 	}
 
+	@Transactional(readOnly = true)
+	public List<Cliente> retornaClientePorNome(String nome) {
+		List<Cliente> clientes = repository.findClientesPorNome(nome);
+		return clientes;
+	}
+	
 	@Transactional
 	public Cliente inserirNovoCliente(Cliente cliente) {
 		try {
